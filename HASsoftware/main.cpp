@@ -58,7 +58,6 @@ int main(int argc, char** argv){
    
    Model M( d, m, r, s, c);   // instance of model " 3D Warped Torus "
 
-
    
    cout << "--------------------------------------" << endl;
    cout << "\n  Running model: " << M.ModelName() << "\n" << endl;
