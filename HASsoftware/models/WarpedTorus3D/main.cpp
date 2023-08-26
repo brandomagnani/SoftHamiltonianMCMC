@@ -1,5 +1,5 @@
 /*
-       Squishy sampler project, the RATTLE Accellerated Sampler approach.
+       Squishy sampler project, the RATTLE Accelerated Sampler approach.
        See main.cpp for more information.
        
        The correctness checks below are adapted from Jonathan Goodman's

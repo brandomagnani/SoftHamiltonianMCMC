@@ -1,5 +1,5 @@
 /*
-       Squishy sampler project, the RATTLE Accellerated Sampler approach.
+       Squishy sampler project, the RATTLE Accelerated Sampler approach.
        See main.cpp for more information.
        
        The correctness checks below are adapted from Jonathan Goodman's
@@ -57,6 +57,7 @@ int main(int argc, char** argv){
    
    
    Model M( d, m, r, s, c);   // instance of model " 3D Warped Torus "
+
 
    
    cout << "--------------------------------------" << endl;
