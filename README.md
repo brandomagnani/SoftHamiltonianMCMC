@@ -1,1 +1,3 @@
-# SoftHamiltonianMCMC
+# Hamiltonian Sampler
+
+
