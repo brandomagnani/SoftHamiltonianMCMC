@@ -84,7 +84,7 @@ int main(int argc, char** argv){
 
 
 
-   size_t T      = 1000000;     // number of MCMC steps
+   size_t T      = 5000000;     // number of MCMC steps
    double neps   = 1.e-10;       // convergence tolerance for Newton projection
    double rrc    = 1.e-8;        // closeness criterion for the reverse check
    int itm       = 6;            // maximum number of Newtons iterations
@@ -144,7 +144,7 @@ int main(int argc, char** argv){
    cout << " eps = " << eps << endl;
    cout << " Elapsed time : " << chrono::duration_cast<chrono::seconds>(end - start).count() << " sec" << endl;
    cout << " " << endl;
-   cout << " RATTLE move POSITION projection failures    : " << stats.HardRejectionFailedProjection_qn << endl;
+   cout << " RATTLE move POSITION projection failures    : " << stats.HardFailedProjection_q2 << endl;
    cout << " Rattle move POSITION reverse check failures : " << stats.HardRejectionReverseCheck_q << endl;
    cout << " Rattle move MOMENTUM reverse check failures : " << stats.HardRejectionReverseCheck_p << endl;
    cout << " Rattle move reverse check failures : " << stats.HardRejectionReverseCheck << endl;

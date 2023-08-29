@@ -27,11 +27,12 @@ struct SamplerStats{                     /* Acceptance/rejection data from the s
    int SoftRejectionMetropolis;
    int HardSample;
    int HardSampleAccepted;
-   int HardRejectionFailedProjection_qn; // Hard move: failed projection from x+v in T_x to y
-   int HardRejectionMetropolis;
+   int HardFailedProjection_q2;          // Hard move: failed projection in RATTLE time step
+   int HardFailedProjection_qr;          // Hard move: failed projection in reverse RATTLE time step
    int HardRejectionReverseCheck_q;
    int HardRejectionReverseCheck_p;
    int HardRejectionReverseCheck;
+   int HardRejectionMetropolis;
 };
 
 
