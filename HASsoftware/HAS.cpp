@@ -285,18 +285,18 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
       
       if (nsteps > 0 ){   // if there was at least ONE successfull forward RATTLE projection
          p2    = - p2;      // apply momentum reversal ...!!
-         
          // save results for Metropolis check below
          qn = q2;
          pn = p2;
          gxiqn = gxiq2;
          xiqn  = z;
-      } else{ // if there were no successfull forward RATTLE projections}
+      } else{   // if there were no successfull forward RATTLE projections
          qn = q;
          pn = p;
          gxiqn = gxiq;
          xiqn  = z;
       }
+      
    // Now do the REVERSE CHECK !! :
       
    // (1) apply RATTLE integrator "nsteps" times to starting from (q2, p2) to get (qr, pr)
@@ -384,7 +384,7 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
       } // end of reverse check
       
       
-      // Do the Metropolis detailed balance check for (q,p) --> (qn, pn)
+      // Do the Metropolis detailed balance check for (q,p) --> (qn, pn), only if proposal differs from current state
       if ( (nsteps > 0) && (rtFlag == reverse_check_worked) ){
          
          //       Compute Tqn =  basis for tangent space at qn. To do so, calculate Full SVD of gxiy = U * S * V^t. Then,
@@ -433,7 +433,6 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
       else {                                       // process a rejected proposal
       }
       
-         
    } // end of MCMC loop
    
 } // end of sampler
