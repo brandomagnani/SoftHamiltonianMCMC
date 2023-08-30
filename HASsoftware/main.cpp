@@ -84,7 +84,7 @@ int main(int argc, char** argv){
 
 
 
-   size_t T      = 5000000;     // number of MCMC steps
+   size_t T      = 2000000;     // number of MCMC steps
    double neps   = 1.e-10;       // convergence tolerance for Newton projection
    double rrc    = 1.e-8;        // closeness criterion for the reverse check
    int itm       = 6;            // maximum number of Newtons iterations
@@ -102,7 +102,7 @@ int main(int argc, char** argv){
    double eps    = 1.0 / sqrt(2.0*beta);        // squish parameter
    
    int Nsoft = 1;          // number of Soft moves for MCMC step
-   int Nrattle = 1;        // number of RATTLE integrator time steps for each MCMC step
+   int Nrattle = 3;        // number of RATTLE integrator time steps for each MCMC step
    
    double ks  = 0.7;       // factor for Soft proposal size
    double ss  = ks*eps;    // scale for Soft proposal
@@ -127,6 +127,7 @@ int main(int argc, char** argv){
    double Ts = stats.SoftSample;    // number of Soft samples
    double Tr = stats.HardSample;    // number of Rattle samples
    int    Ns = Ts;                  // number of good samples = number of soft samples
+   //int    Ns = Tr;                  // number of good samples = number of soft samples
    double As = 0.;                  // Pr of Acceptance of Soft sample
    double Ar = 0.;                  // Pr of Acceptance of Rattle sample
    
@@ -155,6 +156,7 @@ int main(int argc, char** argv){
    cout << " Number of Rattle samples = " << Tr    << endl;
    cout << " " << endl;
    cout << " Soft   sample Acceptance Pr = " << As   << endl;
+   cout << " RATTLE sample Acceptance Pr = " << Ar   << endl;
    //cout << " Rattle sample Acceptance Pr = " << Ar   << endl;
 
    cout << " " << endl;
@@ -192,7 +194,7 @@ int main(int argc, char** argv){
          x1 = L + dx*i + .5*dx;
          fl[i]= M.yzIntegrate( x1, L, R, eps, ni);
       }
-               
+      
       int outliers = 0;       //  number of samples outside the histogram range
       for ( unsigned int iter = 0; iter < Ns; iter++){
          x1 = chain[ d*iter ];  // same as before, but with k=0 as we need q[0] of iter-th good sample

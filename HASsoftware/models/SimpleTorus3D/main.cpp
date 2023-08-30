@@ -102,7 +102,7 @@ int main(int argc, char** argv){
    double eps    = 1.0 / sqrt(2.0*beta);        // squish parameter
    
    int Nsoft = 1;          // number of Soft moves for MCMC step
-   int Nrattle = 1;        // number of RATTLE integrator time steps for each MCMC step
+   int Nrattle = 3;        // number of RATTLE integrator time steps for each MCMC step
    
    double ks  = 0.6;       // factor for Soft proposal size
    double ss  = ks*eps;    // scale for Soft proposal
@@ -155,7 +155,7 @@ int main(int argc, char** argv){
    cout << " Number of Rattle samples = " << Tr    << endl;
    cout << " " << endl;
    cout << " Soft   sample Acceptance Pr = " << As   << endl;
-   //cout << " Rattle sample Acceptance Pr = " << Ar   << endl;
+   cout << " Rattle sample Acceptance Pr = " << Ar   << endl;
 
    cout << " " << endl;
    cout << " T  = " << T_chain  << endl;

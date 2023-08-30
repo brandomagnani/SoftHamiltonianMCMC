@@ -142,7 +142,7 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
    
    for (unsigned int iter = 0; iter < T; iter++){
       
-      //---------------------------------------------Isotropic Gaussian Metropolis step in position space------------------------------------------
+      //----------------------------------------------Isotropic Gaussian Metropolis step in position space-------------------------------------------
       
       for (unsigned int i = 0; i < Nsoft; i++){
          
@@ -186,9 +186,7 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
          }
       } // end of Metropolis move
       
-      
       //-----------------------------Re-sample momentum p in T_q = tangent space of level Surface S_xi(q) at point q---------------------------------
-      
       
       for ( unsigned int k = 0; k < n; k++){   // Isotropic Gaussian, not tangent
          R[k] = SN(RG);
@@ -214,19 +212,20 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
       
       p = Tq * R;   //   new momentum in the q-tangent space of level Surface S_xi(q)
       
-      //---------------------------------------------------------------RATTLE steps-------------------------------------------------------------------
+      //---------------------------------------------------------------RATTLE steps------------------------------------------------------------------
       
       stats-> HardSample++;     // one Rattle move
       
       z     = xiq;        // need the level z = S_xi(q1), actually have xiq from isotropic Metropolis above, can re-use that !!
-      q1     = q;             // save starting position, needed later for Metropolis check
-      p1     = p;             // save starting momentum, needed later for Metropolis check
+      q1     = q;         // initial position for RATTLE iteration
+      p1     = p;         // initial momentum for RATTLE iteration
       gxiq1  = gxiq;
       xiq1   = xiq;
+
+      nsteps = 0;            // reset nsteps
       
-      nsteps = 0;  // reset nsteps
       
-   // Take "Nrattle" time steps using RATTLE integrator :
+   // Take "Nrattle" time steps using RATTLE integrator : (q, p) --> (q2, p2)
       
       for (unsigned int i = 0; i < Nrattle; i++){
          
@@ -270,7 +269,7 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
             r     = - trans( gxiq2 )*p2;
             solve( gtygy, a, r);
             
-            // Set the new state to be the ones given by RATTLE with   ** Momentum Reversal **
+            // Set the new state to be the one produced by RATTLE iteration above
             p2    = p2 + gxiq2*a;
             // q2 already set at the end of Newton iteration
             // end of RATTLE integrator single step
@@ -283,8 +282,13 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
          }
       }  // end of forward RATTLE iterations
       
-      if (nsteps > 0 ){   // if there was at least ONE successfull forward RATTLE projection
-         p2    = - p2;      // apply momentum reversal ...!!
+      
+   // If there was at least ONE successfull forward RATTLE projection, apply ** Momentum Reversal ** :  (q2, p2) --> (q2, - p2)
+      
+      if (nsteps > 0 ){
+         
+         p2    = - p2;      // apply ** Momentum Reversal **
+         
          // save results for Metropolis check below
          qn = q2;
          pn = p2;
@@ -297,11 +301,12 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
          xiqn  = z;
       }
       
+      
    // Now do the REVERSE CHECK !! :
       
-   // (1) apply RATTLE integrator "nsteps" times to starting from (q2, p2) to get (qr, pr)
+   // (1) apply RATTLE integrator "Nrattle" times to starting from (q2, p2) to get (qr, pr)
       
-      for (unsigned int i = 0; i < nsteps; i++){ // Take "nsteps" reverse time steps using RATTLE integrator :
+      for (unsigned int i = 0; i < Nrattle; i++){ // Take "nsteps" reverse time steps using RATTLE integrator :
          
          rtFlag = starting_proj_qr;
          //    Project q2 + dt*p2 onto the constraint surface S_z, check if the result is = q
@@ -364,7 +369,7 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
          }
          
          if ( rtFlag == q_reverse_check_worked) {
-            pr = - pr;    // apply momentum reversal ...!!
+            pr = - pr;    // apply ** Momentum reversal ** for reverse check ...!!
             if (pr == p) {
                rtFlag = reverse_check_worked;
             } else{
@@ -384,8 +389,8 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
       } // end of reverse check
       
       
-      // Do the Metropolis detailed balance check for (q,p) --> (qn, pn), only if proposal differs from current state
-      if ( (nsteps > 0) && (rtFlag == reverse_check_worked) ){
+   // Do the Metropolis detailed balance check for (q,p) --> (qn, pn), only if proposal differs from current state
+      if ( rtFlag == reverse_check_worked ){
          
          //       Compute Tqn =  basis for tangent space at qn. To do so, calculate Full SVD of gxiy = U * S * V^t. Then,
          //       .. Tqn = last d-m columns of U in the Full SVD for gxiq
@@ -420,7 +425,7 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
          else{
             rtFlag = Met_acc_rt;                       // accepted
          }    // Metropolis rejection step done
-      }
+      } // end of Metropolis check
          
       if ( rtFlag ==  Met_acc_rt) {     //  process an accepted proposal
          q   = qn;
@@ -432,6 +437,17 @@ void HASampler(      vector<double>& chain,        /* Position Samples output fr
       }
       else {                                       // process a rejected proposal
       }
+      
+      
+//-------------------------------------- Only for DEBUGGING : store the sample when number of Soft moves = 0 ----------------------------------------
+      if ( Nsoft == 0 ){
+         l++;
+         for ( int k = 0; k < d; k++){
+            chain[ k + d*l] = q[k];
+         }
+      }
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+      
       
    } // end of MCMC loop
    
